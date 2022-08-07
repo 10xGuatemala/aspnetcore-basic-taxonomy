@@ -25,7 +25,7 @@ namespace Dev10x.BasicTaxonomy.Controllers
 {
 
     /// <summary>
-    /// Rest Controller for Traxonomies
+    /// Controller for the Taxonomies operations
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
@@ -34,6 +34,10 @@ namespace Dev10x.BasicTaxonomy.Controllers
         //api services
         private readonly ITaxonomyService _taxonomyService;
 
+        /// <summary>
+        /// Constructor for service injection
+        /// </summary>
+        /// <param name="taxonomyService"></param>
         public TaxonomiesController(ITaxonomyService taxonomyService)
         {
             _taxonomyService = taxonomyService;
@@ -42,7 +46,7 @@ namespace Dev10x.BasicTaxonomy.Controllers
         /// <summary>
         /// Return all taxonomy data or 404 error if dont have any
         /// </summary>
-        /// <returns>List<TaxonomyDto></returns>
+        /// <returns>TaxonomyDto</returns>
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]

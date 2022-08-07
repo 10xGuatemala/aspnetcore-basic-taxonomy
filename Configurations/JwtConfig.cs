@@ -16,12 +16,35 @@ using System.Text;
 
 namespace Dev10x.BasicTaxonomy.Configurations
 {
+    /// <summary>
+    /// Mapping representatio of JwtConfig section from application.json
+    /// </summary>
     public class JwtConfig
     {
+        /// <summary>
+        /// JwtSecret from aplication.json
+        /// </summary>
         public string JwtSecret { get; set; }
+
+        /// <summary>
+        /// JwtTokenExpiration from aplication.json
+        /// </summary>
         public long JwtTokenExpiration { get; set; }
+
+        /// <summary>
+        /// TimeZone from aplication.json
+        /// </summary>
         public string TimeZone { get; set; }
+
+        /// <summary>
+        /// key - string representation of secret from aplication.json
+        /// </summary>
         private byte[] key;
+
+        /// <summary>
+        /// Get ascii encoding of jwtSecret
+        /// </summary>
+        /// <returns>byte representation</returns>
         public byte[] GetKey()
         {
             if (key == null)

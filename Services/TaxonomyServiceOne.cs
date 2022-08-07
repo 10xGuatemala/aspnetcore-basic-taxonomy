@@ -27,21 +27,30 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dev10x.BasicTaxonomy.Services
 {
+    /// <summary>
+    /// Service for one interface implementation
+    /// </summary>
     public class TaxonomyServiceOne : ITaxonomyService
     {
         private readonly DbService _dbService;
         private readonly IMapper _mapper;
 
+        /// <summary>
+        /// Constructor for service injection
+        /// </summary>
+        /// <param name="dbService"></param>
+        /// <param name="mapper"></param>
         public TaxonomyServiceOne(DbService dbService
             , IMapper mapper)
         {
             _dbService = dbService;
             _mapper = mapper;
         }
+
         /// <summary>
         /// Return all rows of DatamartView
         /// </summary>
-        /// <returns> List<TaxonomyDto> </returns>
+        /// <returns> TaxonomyDto List </returns>
         /// <exception cref="ApiException"></exception>
         List<TaxonomyDto> ITaxonomyService.FindAll()
         {

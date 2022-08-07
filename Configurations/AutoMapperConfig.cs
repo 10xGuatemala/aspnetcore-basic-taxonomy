@@ -18,8 +18,14 @@ using Dev10x.BasicTaxonomy.Models;
 
 namespace Dev10x.BasicTaxonomy.Configurations
 {
+    /// <summary>
+    /// Class for mapping a Dto to POCO and back
+    /// </summary>
     public class AutoMapperConfig : Profile
     {
+        /// <summary>
+        /// Default constructor with de all mapping available
+        /// </summary>
         public AutoMapperConfig()
         {
             CreateMap<DatamartView, TaxonomyDto>();

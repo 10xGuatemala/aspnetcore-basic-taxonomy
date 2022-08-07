@@ -14,23 +14,30 @@
 //    limitations under the License.
 
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Dev10x.AspnetCore.Commons.Api.Exceptions;
 using Dev10x.BasicTaxonomy.Dtos;
 using Dev10x.BasicTaxonomy.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Dev10x.BasicTaxonomy.Controllers
 {
-
+    /// <summary>
+    /// Controller for the Families operations
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class FamiliesController : ControllerBase
     {
         private readonly FamilyService _familyService;
 
-
+        /// <summary>
+        /// Constructor for service injection
+        /// </summary>
+        /// <param name="familyService"></param>
         public FamiliesController(FamilyService familyService)
         {
             _familyService = familyService;
@@ -62,7 +69,10 @@ namespace Dev10x.BasicTaxonomy.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
-        public ActionResult Post(string familyName)
+        public ActionResult Post(
+            [StringLength(50, MinimumLength =3)]
+            string familyName
+            )
         {
             _familyService.Save(familyName);
             return StatusCode(StatusCodes.Status201Created);

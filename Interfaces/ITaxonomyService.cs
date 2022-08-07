@@ -17,8 +17,15 @@ using Dev10x.BasicTaxonomy.Dtos;
 
 namespace Dev10x.BasicTaxonomy.Interfaces
 {
+    /// <summary>
+    /// Interface for Taxonomy Services
+    /// </summary>
     public interface ITaxonomyService
     {
+        /// <summary>
+        /// Find All Taxonomy data
+        /// </summary>
+        /// <returns>List of TaxonomyDto</returns>
         List<TaxonomyDto> FindAll();
     }
 }

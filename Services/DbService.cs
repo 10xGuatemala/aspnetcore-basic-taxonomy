@@ -21,8 +21,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 
+
 namespace Dev10x.BasicTaxonomy.Services
 {
+    /// <summary>
+    /// Database context service
+    /// </summary>
     public class DbService : DbContext
     {
 
@@ -31,6 +35,13 @@ namespace Dev10x.BasicTaxonomy.Services
         private readonly IRequestService _requestService;
 
 
+        /// <summary>
+        /// Constructor for service injection
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="myDateUtil"></param>
+        /// <param name="logger"></param>
+        /// <param name="requestService"></param>
         public DbService(DbContextOptions<DbService> options
             , DateUtil myDateUtil
             , ILogger<DbService> logger
@@ -52,7 +63,10 @@ namespace Dev10x.BasicTaxonomy.Services
         //sequence
         public DbSet<IntSeq> Seqs { get; set; }
 
-
+        /// <summary>
+        /// Model creating configuration mainly for fluent api
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             /* API Fluent for composite keys*/

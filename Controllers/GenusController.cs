@@ -23,6 +23,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dev10x.BasicTaxonomy.Controllers
 {
+    /// <summary>
+    /// Controller for the Genus operations
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class GenusController : ControllerBase
@@ -30,6 +33,10 @@ namespace Dev10x.BasicTaxonomy.Controllers
 
         private readonly GenusService _genusService;
 
+        /// <summary>
+        /// Constructor for service injection
+        /// </summary>
+        /// <param name="genusService"></param>
         public GenusController(GenusService genusService)
         {
             _genusService = genusService;
@@ -52,8 +59,8 @@ namespace Dev10x.BasicTaxonomy.Controllers
         /// <summary>
         /// Create new Genus
         /// </summary>
-        /// <param name="familyName"></param>
-        /// <returns></returns>
+        /// <param name="genus">Genus data for creation</param>
+        /// <returns>ActionResult</returns>
         [HttpPost]
         [Produces("application/json")]
         [Consumes("application/json")]

@@ -26,6 +26,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Dev10x.BasicTaxonomy.Services
 {
+    /// <summary>
+    /// Service for crud, update and finder operations
+    /// </summary>
     public class GenusService
     {
         private readonly DbService _dbService;
@@ -33,7 +36,13 @@ namespace Dev10x.BasicTaxonomy.Services
         private readonly IMapper _mapper;
         private ILogger<GenusService> _logger { get; }
 
-
+        /// <summary>
+        /// Constructor for service injection
+        /// </summary>
+        /// <param name="dbService"></param>
+        /// <param name="familyService"></param>
+        /// <param name="mapper"></param>
+        /// <param name="logger"></param>
         public GenusService(DbService dbService
             , FamilyService familyService
             , IMapper mapper
@@ -48,7 +57,7 @@ namespace Dev10x.BasicTaxonomy.Services
         /// <summary>
         /// Return all rows of Family
         /// </summary>
-        /// <returns> List<TaxonomyDto> </returns>
+        /// <returns> GenusGet List </returns>
         /// <exception cref="ApiException"></exception>
         public List<GenusGet> FindAll()
         {
@@ -65,8 +74,9 @@ namespace Dev10x.BasicTaxonomy.Services
         /// <summary>
         /// Find by criteria (id or name)
         /// </summary>
-        /// <param name="criteria"></param>
-        /// <returns>List<Family></returns>
+        /// <param name="criteria">Search criteria</param>
+        /// <param name="exceptionOnNotExist">when is true throws an exception if no data is found</param>
+        /// <returns>Genus List</returns>
         /// <exception cref="ApiException"></exception>
         public List<Genus> Find(GenusGet criteria, bool exceptionOnNotExist = true)
         {
@@ -88,7 +98,7 @@ namespace Dev10x.BasicTaxonomy.Services
         /// <summary>
         /// Save a new genus
         /// </summary>
-        /// <param name="genus"></param>
+        /// <param name="genus">Object to save</param>
         public void Save(GenusPost genus)
         {
             //There must be a family to update
@@ -96,7 +106,7 @@ namespace Dev10x.BasicTaxonomy.Services
 
             //There must not be a genus with the same name
             if (!CollectionUtil.IsEmpty(Find(new GenusGet { GenusName = genus.GenusName }, false)))
-                throw new ApiException(StatusCodes.Status404NotFound, Constants.ERROR_422_EXIST);
+                throw new ApiException(StatusCodes.Status422UnprocessableEntity, Constants.ERROR_422_EXIST);
 
             //generate the primary key
             int id = genus.FamilyId + GetNextSequenceValue();
@@ -108,6 +118,10 @@ namespace Dev10x.BasicTaxonomy.Services
             _dbService.SaveChanges();
         }
 
+        /// <summary>
+        /// Get next value of a genus sequence
+        /// </summary>
+        /// <returns>sequence next value int</returns>
         public int GetNextSequenceValue()
         {
             int nextVal = _dbService.Seqs

@@ -16,9 +16,15 @@ using Dev10x.BasicTaxonomy.Dtos;
 
 namespace Dev10x.BasicTaxonomy.Interfaces
 {
+    /// <summary>
+    /// Interface for request services
+    /// </summary>
     public interface IRequestService
     {
-
+        /// <summary>
+        /// Get the user-request information
+        /// </summary>
+        /// <returns>RequestUserDto</returns>
         RequestUserDto GetRequestUser();
 
     }

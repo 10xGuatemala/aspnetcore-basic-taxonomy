@@ -20,6 +20,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Dev10x.BasicTaxonomy.Services
 {
+    /// <summary>
+    /// Service to get request user data
+    /// </summary>
     public class RequestService : IRequestService
     {
 
@@ -27,6 +30,11 @@ namespace Dev10x.BasicTaxonomy.Services
         private readonly IHttpContextAccessor httpContextAccessor;
         private ILogger<RequestService> _logger { get; }
 
+        /// <summary>
+        /// Constructor for service injection
+        /// </summary>
+        /// <param name="httpContextAccessor"></param>
+        /// <param name="logger"></param>
         public RequestService(IHttpContextAccessor httpContextAccessor
             , ILogger<RequestService> logger)
         {

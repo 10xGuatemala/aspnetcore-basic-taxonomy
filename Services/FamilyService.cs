@@ -25,11 +25,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dev10x.BasicTaxonomy.Services
 {
+    /// <summary>
+    /// Service for crud, update and finder operations
+    /// </summary>
     public class FamilyService
     {
         private readonly DbService _dbService;
         private readonly IMapper _mapper;
 
+        /// <summary>
+        /// constructor for service injection 
+        /// </summary>
+        /// <param name="dbService"></param>
+        /// <param name="mapper"></param>
         public FamilyService(DbService dbService
             , IMapper mapper)
         {
@@ -40,7 +48,7 @@ namespace Dev10x.BasicTaxonomy.Services
         /// <summary>
         /// Return all rows of Family
         /// </summary>
-        /// <returns> List<TaxonomyDto> </returns>
+        /// <returns> FamilyDto List</returns>
         /// <exception cref="ApiException"></exception>
         public List<FamilyDto> FindAll()
         {
@@ -57,8 +65,9 @@ namespace Dev10x.BasicTaxonomy.Services
         /// <summary>
         /// Find by criteria (id or name)
         /// </summary>
-        /// <param name="criteria"></param>
-        /// <returns>List<Family></returns>
+        /// <param name="criteria">Search criteria</param>
+        /// <param name="exceptionOnNotExist">when is true throws an exception if no data is found</param>
+        /// <returns>Family List</returns>
         /// <exception cref="ApiException"></exception>
         public List<Family> Find(FamilyDto criteria, bool exceptionOnNotExist = true)
         {
@@ -75,15 +84,15 @@ namespace Dev10x.BasicTaxonomy.Services
         }
 
         /// <summary>
-        /// Save a Family new row
+        /// Save a Family new row. There must not be a family with the same name
         /// </summary>
-        /// <param name="newRecord"></param>
+        /// <param name="familyName"></param>
         /// <exception cref="ApiException"></exception>
         public void Save(string familyName)
         {
             //There must not be a family with the same name
             if (!CollectionUtil.IsEmpty(Find(new FamilyDto { FamilyName = familyName }, false)))
-                throw new ApiException(StatusCodes.Status404NotFound, Constants.ERROR_422_EXIST);
+                throw new ApiException(StatusCodes.Status422UnprocessableEntity, Constants.ERROR_422_EXIST);
 
             Family model = new() { FamilyName = familyName };
             _dbService.Add(model);
@@ -94,13 +103,13 @@ namespace Dev10x.BasicTaxonomy.Services
         /// <summary>
         /// Update a Family existing row
         /// </summary>
-        /// <param name="newRecord"></param>
+        /// <param name="family">Row to be updated</param>
         /// <exception cref="ApiException"></exception>
-        public void Update(FamilyDto updatedRow)
+        public void Update(FamilyDto family)
         {
             //There must be a family to update
-            Family result = Find(new FamilyDto { FamilyId = updatedRow.FamilyId }).FirstOrDefault();
-            result.FamilyName = updatedRow.FamilyName;
+            Family result = Find(new FamilyDto { FamilyId = family.FamilyId }).FirstOrDefault();
+            result.FamilyName = family.FamilyName;
 
             _dbService.Families.Update(result);
             _dbService.SaveChanges();
