@@ -21,3 +21,9 @@ These are some other repos for related projects:
 * [10x AspNetCore Commons](https://github.com/SolucionesModernas10X/aspnetcore-commons-api)
 * [10x AspNetCore Utils](https://github.com/SolucionesModernas10X/aspnetcore-utils) 
 
+##Pre-requisites
+ * .Net Core 6 (framework)
+ * PosgreSQL 14.3 (database)
+ * Install the taxonomy-db.sql script in the database
+ * Visual Studio 2019 +
+
