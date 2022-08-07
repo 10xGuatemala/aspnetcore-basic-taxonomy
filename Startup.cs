@@ -12,7 +12,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-
 using System;
 using System.IO;
 using System.Reflection;
@@ -36,33 +35,36 @@ using Microsoft.IdentityModel.Tokens;
 using Dev10x.BasicTaxonomy.Configurations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Dev10x.AspnetCore.Utils.Date;
+using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace Dev10x.BasicTaxonomy
 {
+    /// <summary>
+    /// Startup class
+    /// </summary>
     public class Startup
     {
+
+        public IConfiguration Configuration { get; }
+
+        private JwtConfig jwt;
+
+        /// <summary>
+        /// Startup configuration
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        ///  This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
         public void ConfigureServices(IServiceCollection services)
         {
-
-            // --------------------------- Basic API configurations --------------------------------
-            services.AddProblemDetails(ConfigureProblemDetails)
-                .AddControllers()
-                .AddProblemDetailsConventions()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.IgnoreNullValues = true;
-                    options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
-                    options.JsonSerializerOptions.Converters.Add(new JsonDateTimeOffsetConverter());
-                });
-
 
             // --------------------------- Swagger ---------------------------------------------------
             services.AddSwaggerGen(c =>
@@ -77,7 +79,7 @@ namespace Dev10x.BasicTaxonomy
                     {
                         Name = "Soluciones Modernas 10x",
                         Email = "proyectos@10x.gt",
-                        Url = new Uri("https://10x.gt"),
+                        Url = new Uri("https://10x.gt/"),
                     },
                     License = new OpenApiLicense
                     {
@@ -124,7 +126,7 @@ namespace Dev10x.BasicTaxonomy
             IConfigurationSection apiSettingsSection = Configuration.GetSection("JwtConfig");
             services.Configure<JwtConfig>(apiSettingsSection);
 
-            JwtConfig jwt = apiSettingsSection.Get<JwtConfig>();
+            jwt = apiSettingsSection.Get<JwtConfig>();
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -159,7 +161,7 @@ namespace Dev10x.BasicTaxonomy
             }));
 
             // ------------------------ API Services --------------------------
-            services.AddSingleton<DateUtil>();
+            services.AddSingleton<DateUtil>(new DateUtil(jwt.TimeZone));
 
 
             services.AddHttpContextAccessor();
@@ -171,12 +173,33 @@ namespace Dev10x.BasicTaxonomy
 
 
             // ------------------------ Data Access ---------------------------
+            // only user for pgsql compibility for .Net6
+            // see https://www.npgsql.org/doc/types/datetime.html#timestamps-and-timezones
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+
             services.AddDbContext<DbService>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("PostgresqlConnection")));
 
+
+            // --------------------------- Basic API configurations --------------------------------
+            services.AddProblemDetails(ConfigureProblemDetails)
+                .AddControllers()
+                .AddProblemDetailsConventions()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+                    options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+                    options.JsonSerializerOptions.Converters.Add(new JsonDateTimeOffsetConverter());
+                });
+
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -189,6 +212,7 @@ namespace Dev10x.BasicTaxonomy
                 // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BasicTaxonomy v1"));
             }
+
             // handler exception
             app.UseProblemDetails();
 
@@ -198,7 +222,6 @@ namespace Dev10x.BasicTaxonomy
             // To use the default framework request logging instead, remove this line and set the "Microsoft"
             // level in appsettings.json to "Information".
             app.UseSerilogRequestLogging();
-
 
             app.UseRouting();
 
@@ -212,32 +235,53 @@ namespace Dev10x.BasicTaxonomy
 
         private void ConfigureProblemDetails(ProblemDetailsOptions options)
         {
+            DateTime now = new DateUtil(jwt.TimeZone).GetTime();
+
             // Only include exception details in a development environment
             options.IncludeExceptionDetails = (ctx, ex) =>
             {
-                //WARN:Only returno true for debug
+                //WARN:Only return true for debug
                 return false;
             };
+
+            options.Map<ArgumentNullException>(exception => new ErrorDetails
+            {
+                Title = exception.Message,
+                Status = StatusCodes.Status400BadRequest,
+                Date = now
+
+            });
+
+            options.Map<ValidationException>(exception => new ErrorDetails
+            {
+                Title = exception.Message,
+                Status = StatusCodes.Status422UnprocessableEntity,
+                Date = now
+
+            });
+
             //Api Customs Exceptions
             options.Map<ApiException>(exception => new ErrorDetails
             {
                 Title = exception.Message,
                 Status = exception.StatusCode,
-                Date = new DateUtil().GetTime()
+                Date = now
 
             });
-            //"catch other exception"
+
+            //"catch generic exception"
             options.Map<Exception>(exception => new ErrorDetails
             {
                 Title = Constants.ERROR_500,
                 Status = StatusCodes.Status500InternalServerError,
-                Date = new DateUtil().GetTime(),
+                Date = now,
                 Detail = Constants.ERROR_500
 
             });
 
 
         }
+
     }
 
 }
