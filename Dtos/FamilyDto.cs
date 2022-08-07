@@ -17,13 +17,20 @@ using Dev10x.BasicTaxonomy.Helpers;
 
 namespace Dev10x.BasicTaxonomy.Dtos
 {
+    /// <summary>
+    /// Dto of family
+    /// </summary>
     public class FamilyDto
     {
-
+        /// <summary>
+        /// Family Identifier
+        /// </summary>
         public int FamilyId { get; set; }
 
-        [Required(ErrorMessage = Constants.ERROR_REQUIRED)]
-        [MinLength(3, ErrorMessage = Constants.ERROR_LEN)]
+        /// <summary>
+        /// Family name - required 
+        /// </summary>
+        [StringLength(50, MinimumLength = 3, ErrorMessage = Constants.ERROR_LEN)]
         public string FamilyName { get; set; }
 
 

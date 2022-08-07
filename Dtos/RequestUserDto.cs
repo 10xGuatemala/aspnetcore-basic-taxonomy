@@ -15,12 +15,24 @@
 
 namespace Dev10x.BasicTaxonomy.Dtos
 {
+    /// <summary>
+    /// Dto for user request 
+    /// </summary>
     public class RequestUserDto
     {
-
+        /// <summary>
+        /// Username
+        /// </summary>
         public string Username { get; set; }
+
+        /// <summary>
+        /// Role
+        /// </summary>
         public string Role { get; set; }
 
+        /// <summary>
+        /// Empty constructor
+        /// </summary>
         public RequestUserDto()
         {
         }

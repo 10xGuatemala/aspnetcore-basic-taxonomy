@@ -17,19 +17,41 @@ using Dev10x.BasicTaxonomy.Helpers;
 
 namespace Dev10x.BasicTaxonomy.Dtos
 {
+    /// <summary>
+    /// Genus class for post controllers
+    /// </summary>
     public class GenusPost
     {
-        [Required(ErrorMessage = Constants.ERROR_REQUIRED)]
+        /// <summary>
+        /// Family Identifier - required for post (create) operations
+        /// </summary>
+        [Range(1, 999999, ErrorMessage = Constants.ERROR_LEN)]
         public int FamilyId { get; set; }
 
-        [Required(ErrorMessage = Constants.ERROR_REQUIRED)]
-        [MinLength(3, ErrorMessage = Constants.ERROR_LEN)]
+        /// <summary>
+        /// Genus Name - required for post (create)  operations
+        /// </summary>
+        [StringLength(50, MinimumLength = 3, ErrorMessage = Constants.ERROR_LEN)]
         public string GenusName { get; set; }
     }
+    /// <summary>
+    /// Genus class for get controllers
+    /// </summary>
     public class GenusGet
     {
+        /// <summary>
+        /// Family Identifier for get (search) operations
+        /// </summary>
         public int FamilyId { get; set; }
+
+        /// <summary>
+        /// Genus Identifier for get (search) operations
+        /// </summary>
         public int GenusId { get; set; }
+
+        /// <summary>
+        /// Genus Name for get (search) operations
+        /// </summary>
         public string GenusName { get; set; }
 
     }

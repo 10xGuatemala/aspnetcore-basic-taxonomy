@@ -14,13 +14,34 @@
 //    limitations under the License.
 namespace Dev10x.BasicTaxonomy.Dtos
 {
+    /// <summary>
+    /// Taxonomy Dto 
+    /// </summary>
     public class TaxonomyDto
     {
+        /// <summary>
+        /// Family Identifier
+        /// </summary>
         public int FamilyId { get; set; }
+        /// <summary>
+        /// Family Name
+        /// </summary>
         public string FamilyName { get; set; }
+        /// <summary>
+        /// Genus Identifier (can be null)
+        /// </summary>
         public int? GenusId { get; set; }
+        /// <summary>
+        /// Genus Name
+        /// </summary>
         public string GenusName { get; set; }
+        /// <summary>
+        /// Specie Identifier (can be null)
+        /// </summary>
         public int? SpecieId { get; set; }
+        /// <summary>
+        /// Specie Name
+        /// </summary>
         public string SpecieName { get; set; }
     }
 }
